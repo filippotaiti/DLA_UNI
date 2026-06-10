@@ -1,0 +1,13 @@
+defaults:
+  - model: resnet50
+  - optimizer: adam
+
+seed: 1302
+batch_size: 1024
+epochs: 5
+device: cuda
+training_set_perc: 0.8
+
+logging:
+  project: 'lab1'
+  run_name: 'es 1.3'

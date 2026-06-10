@@ -1,0 +1,4 @@
+_target_: factory_model.build_model
+name: resnet50
+weights: DEFAULT
+num_classes: 43
