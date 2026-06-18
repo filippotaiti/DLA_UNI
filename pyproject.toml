@@ -1,0 +1,2 @@
+[tool.uv.workspace]
+members = ["lab1", "lab2", "lab4"]
