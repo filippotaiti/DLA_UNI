@@ -17,9 +17,14 @@ La pipeline si trova nella cartella *src*.
 
 Si può eseguire la pipeline scrivendo su terminale " python lab1/src/main.py " 
 
+-----------------------------------------------------------------------------------------------------------------------------------
 
-Uso dell'AI:
+### Uso dell'AI:
 
 1. Ho utilizzato Gemini per capire bene il funzionamento della faster_r_cnn. 
-2. Nel secondo esercizio volevo cercare di generare un modello di pipeline riproducibile, non una semplice classe con WandB integrato, che fosse il più possibile indipendente dal modello, sia al fine di svolgere correttamente l'esercizio, ma anche di imparare qualcosa di nuovo che mi potrà tornare utile in futuro in una realtà lavorativa. 
-In particolare, ho chiesto a Claude come strutturano le pipeline in aziende big tech e mi è stato suggerito questo framework Hydra, sviluppato da Meta, che io non conoscevo. Quindi mi sono fatto spiegare come funziona. Una volta imparato ciò l'ho adattato al mio caso in esame.
+2. Nel secondo esercizio volevo cercare di generare un modello di pipeline riproducibile, non una semplice classe con WandB integrato, che fosse il più possibile indipendente dal modello, sia al fine di svolgere correttamente l'esercizio, ma anche di imparare qualcosa di nuovo che mi potrà tornare utile in futuro. 
+In particolare, ho chiesto a Claude come strutturano le pipeline in aziende big tech e mi è stato suggerito questo framework Hydra, sviluppato da Meta, che io non conoscevo. Quindi mi sono fatto spiegare come funziona. Una volta imparato ciò l'ho adattato al mio caso, consultando anche la documentazione sotto-riportata.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+### Documentazione:
+Hydra: https://hydra.cc/docs/intro/
