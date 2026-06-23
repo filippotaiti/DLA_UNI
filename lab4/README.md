@@ -54,7 +54,7 @@ Una classe `NormalizeInverse` esegue la de-normalizzazione (`inv_normalize`), ne
  
 ---
  
-## Metodi implementati
+## Implementazione
  
 ### 1. OOD detection
  

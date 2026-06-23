@@ -37,7 +37,7 @@ Poi si valuta l'accuratezza zero-shot su un dataset di sketch e successivamente,
  
 ---
  
-## Metodi implementati
+## Implementazione
  
 ### 1. SVM (baseline)
  
