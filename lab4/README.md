@@ -11,7 +11,6 @@ Tutto il codice è contenuto in un unico notebook: [`DLA-Lab4.ipynb`](./DLA-Lab4
 ## Indice
  
 - [Panoramica](#panoramica)
-- [Requisiti e installazione](#requisiti-e-installazione)
 - [Struttura del progetto](#struttura-del-progetto)
 - [Dataset e preprocessing](#dataset-e-preprocessing)
 - [Metodi implementati](#metodi-implementati)
