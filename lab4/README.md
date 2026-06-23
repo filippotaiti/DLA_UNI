@@ -34,32 +34,6 @@ Si misura l'efficacia con l'**Attack Success Rate (ASR)** e la **robust accuracy
 3. **Attacchi targeted con valutazione qualitativa e quantitativa**: si generano esempi adversarial target per cercare di ingannare il modello. 
 ---
  
-## Requisiti e installazione
- 
-Il progetto è stato sviluppato con **Python 3.9** e gestito tramite [`uv`](https://github.com/astral-sh/uv).
- 
-Le dipendenze principali sono:
- 
-- `torch`, `torchvision` - modelli, dataset e trasformazioni
-- `numpy` - manipolazione di array e ordinamenti
-- `matplotlib` - grafici
-- `scikit-learn` - metriche di valutazione (ROC, AUROC, matrice di confusione, accuratezza)
-- `omegaconf` - gestione delle configurazioni
-- `tqdm` - barre di avanzamento
-### Setup con `uv`
- 
-```bash
-# Crea l'ambiente virtuale
-uv venv
- 
-# Attivalo
-source .venv/bin/activate        # Linux / macOS
-# .venv\Scripts\activate         # Windows
- 
-# Installa le dipendenze
-uv pip install torch torchvision numpy matplotlib scikit-learn omegaconf tqdm
-```
- 
 ### Riproducibilità
  
 Il notebook imposta i seed di `torch`, `numpy` e `random` e attiva `torch.use_deterministic_algorithms(True)`. Per questo motivo è impostata anche la variabile d'ambiente `CUBLAS_WORKSPACE_CONFIG=:4096:8` (richiesta da alcune operazioni deterministiche su CUDA).
