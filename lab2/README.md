@@ -66,9 +66,7 @@ Il fine-tuning ha portato ad un miglioramento notevole in termini di accuracy.
 | CLIP Model BEFORE Fine-Tuning | Test accuracy | **65.56%** |
 | CLIP Model AFTER Fine-Tuning | Test accuracy | **88.3%** |
  
-**Osservazioni:**
- 
- 
+
 ## Come riprodurre
  
 Il notebook è pensato per essere eseguito **in ordine, dall'alto verso il basso**.
