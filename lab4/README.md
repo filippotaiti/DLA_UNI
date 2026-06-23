@@ -18,7 +18,6 @@ Tutto il codice è contenuto in un unico notebook: [`DLA-Lab4.ipynb`](./DLA-Lab4
   - [3. Adversarial training](#3-attacchi-adversarial-targeted)
 - [Risultati principali](#risultati-principali)
 - [Come riprodurre](#come-riprodurre)
-- [Riferimenti](#riferimenti)
 ---
  
 ## Panoramica
