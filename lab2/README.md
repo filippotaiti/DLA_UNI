@@ -50,8 +50,11 @@ Viene fatto il fine-tuning di DistilBERT **sullo stesso dataset da cui sono stat
 ### 3. Fine-Tuning of a CLIP Model
 
 In questo esercizio inizialmente si valuta l'accuratezza zero-shot del **modello CLIP** su ImageNette, ottenendo un risultato impeccabile (**99%**). Poi, al fine di mettere alla prova le capacità del modello, si utilizza un dataset di immagini sketch.
+
 In tale dataset, l'accuratezza zero-shot è pessima. Tuttavia, la si va a migliorare effettuando fine-tuning, utilizzando una tecnica **PEFT**, cioè LoRA.
+
 LoRA è stata applicata solo sui layer di attenzione, limitatamente a query e value. Questo comporta un addestramento di meno di 500k parametri (anziché i 150M circa di default).
+
 Il fine-tuning ha portato ad un miglioramento notevole in termini di accuracy.
 
 ---
