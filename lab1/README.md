@@ -1,12 +1,12 @@
-# Classification and Object Detection
+# Lab 1: From Pixels to Semantics
 
-Laboratorio sulla classificazione e sull'object detection, utilizzando dataset contenenti immagini stradali.
+Lab on classification and object detection, using datasets containing street images.
 
-Il progetto si concentra inizialmente sulla classificazione, utilizzando sia una SVM che una ResNet50 e successivamente sull'object detection, utilizzando una Faster-R-CNN.
+The project initially focuses on classification, using both an **SVM** and a **ResNet50**, and subsequently on object detection, using a **Faster-R-CNN**.
 
-Il laboratorio è suddiviso in 3 esercizi: il primo e il terzo sono reperibili presso il seguente notebook: [`DLA-Lab1.ipynb`](./DLA-Lab1.ipynb), mentre il secondo è stato sviluppato in moduli Python separati, contenuti nella cartella [src](./src).
+The lab is divided into 3 exercises: the first and third can be found in the following notebook: [`DLA-Lab1.ipynb`](./DLA-Lab1.ipynb), while the second was developed in separate Python modules, located in the folder [src](./src).
 
-La struttura del secondo esercizio è la seguente:
+The structure of the second exercise is as follows:
 
 ```text
 src
@@ -23,45 +23,46 @@ src
 └── train_and_evaluate.py
 ```
 
+Specifically, the second exercise was developed using the framework  ['Hydra'](https://hydra.cc/docs/intro/).
+The goal was to develop a modular pipeline with a high level of abstraction, so that it would be as independent as possible from the model and the overall scenario.
 
+The pipeline consists of:
 
-In particolare, il secondo esercizio è stato sviluppato utilizzando il framework ['Hydra'](https://hydra.cc/docs/intro/), sviluppato da Meta.
-L'obiettivo era quello di sviluppare una pipeline modulare, con un alto livello di astrazione, in maniera tale da essere il più possibile indipendente dal modello e dallo scenario generale.
+1. *config*: a folder that contains the *model* and *optimizer* folders, which contain the *resnet50.yaml* and *adam.yaml* files, respectively
+2. *create_dls.py* : contains the function that creates the DataLoaders
+3. *factory_model.py*: contains the function that instantiates the ResNet
+4. *logger.py*: implement the logging system using **WandB**
+5. *train_and_evaluate.py*: Implements the training-and-evaluation pipeline
+6. *main.py*: main module that can be launched from the terminal
 
-La pipeline è composta da:
-
-1. *config*: cartella che contiene a sua volta le cartelle *model* e *optimizer*, che contengono, rispettivamente, i file  resnet50.yaml e adam.yaml
-2. *create_dls.py* : contiene la funzione che crea i DataLoaders
-3. *factory_model.py*: contiene la funzione che istanzia la resnet
-4. *logger.py*: implementa il sistema di logging con WandB
-5. *train_and_evaluate.py*: implementa la pipeline di train+eval
-6. *main.py*: modulo principale che può essere lanciato da terminale.
-
-La pipeline è stata sviluppata attorno al primo esercizio, con l'obiettivo di riprodurre l'esercizio 1.3, che di base è stato svolto nel notebook.
-Tuttavia, nonostante la pipeline sia 'ResNet-oriented', la configurazione sviluppata con Hydra è del tutto generica: modificando i file YAML (o creandone di nuovi) si possono istanziare anche altri modelli da usare per altri task (es. CLIPModel, ViT, ...)
+The pipeline was developed around the first exercise, with the goal of replicating Exercise 1.3, which was originally carried out in the notebook.
+However, although the pipeline is “ResNet-oriented,” the configuration developed with Hydra is entirely generic: by modifying the YAML files (or creating new ones), you can also instantiate other models for use in different tasks (e.g., CLIPModel, ViT, ...).
     
-Si può eseguire la pipeline scrivendo su terminale `python lab1/src/main.py`. 
+You can run the pipeline using the following command: 
+
+```bash
+python lab1/src/main.py
+```
 
 
-## Implementazione:
+## Implementation:
 
 ### 1. Classification using a SVM (baseline) and a ResNet50
 
-In questo esercizio, inizialmente viene svolta un'esplorazione dei dati (Exploration Data Analysis), sul dataset **GTSRB**. Successivamente si utilizza una ResNet50 pre-addestrata per fare *feature extraction*. 
-Le feature estratte in questo modo, sono utilizzate per addestrare e valutare una SVM. Fino a questo punto, il pre-processing consiste soltanto nella conversione delle immagini in tensori.
+In this exercise, we first perform an exploration of the data (Exploratory Data Analysis) on the **GTSRB** dataset. Next, we use a pre-trained ResNet50 to perform *feature extraction*.
+The features extracted in this way are used to train and evaluate an SVM. Up to this point, preprocessing consists solely of converting the images into tensors.
 
-La SVM ottiene sul test set un'accuratezza molto bassa: **68%**.
+The SVM achieves a low accuracy on the test set: **68%**.
 
-Successivamente, utilizzando un pre-processing più aggressivo (più adatto a una `ResNet50`), si va a fine-tunare una `ResNet50` pre-addestrata, ottenendo un'accuratezza del **95%**.
+Next, using more aggressive preprocessing (better suited for a pre-trained `ResNet50`), we fine-tune a pre-trained `ResNet50`, achieving an accuracy of **95%**.
 
-### 2. Pipeline consolidation
+### 2. Pipeline Consolidation
 
-Riportato sopra
+Described above.
 
-### 3. Detecting traffic signs
-
-In quest'ultimo esercizio, si istanzia una `Faster-R-CNN', andando a sostituire il suo backbone con quello della ResNET 50 fine-tunata nell'esercizio 1.3 al fine di andare a valutare le prestazioni su **GTSRB Detection Dataset**.
-Come metrica di valutazione viene utilizzata la mAP in varie forme:
+### 3. Detecting Traffic Signs
+In this final exercise, we instantiate a `Faster-R-CNN`, replacing its backbone with that of the ResNet 50 fine-tuned in Exercise 1.3 in order to evaluate its performance on the **GTSRB Detection Dataset**.
+We use mAP in various forms as the evaluation metric:
 - mAP
 - mAP@50
 - mAP@75
@@ -71,9 +72,9 @@ Come metrica di valutazione viene utilizzata la mAP in varie forme:
 
 ---
  
-## Risultati principali
+## Main results
  
-| Esperimento | Metrica | Valore |
+| Experiment | Metric | Value |
 |---|---|---|
 | Baseline SVM | Test accuracy | **68%** |
 | Fine-tuned ResNet50 | Test accuracy| **95%** |
@@ -84,15 +85,15 @@ Come metrica di valutazione viene utilizzata la mAP in varie forme:
 | Faster-R-CNN (ResNet50 backbone) | mAP medium | **0.7334** |
 | Faster-R-CNN (ResNet50 backbone) | mAP large | **0.75** |
 
-## Come riprodurre
+## How to play
  
-Il notebook è pensato per essere eseguito **in ordine, dall'alto verso il basso**.
+The notebook is designed to be worked through **in order, from top to bottom**.
 
 
-----------
+----
 
-### Uso dell'AI:
+### AI use:
 
-1. Ho utilizzato Gemini per capire bene il funzionamento della faster_r_cnn. 
-2. Nel secondo esercizio volevo cercare di generare un modello di pipeline riproducibile, non una semplice classe con WandB integrato, che fosse il più possibile indipendente dal modello, sia al fine di svolgere correttamente l'esercizio, ma anche di imparare qualcosa di nuovo che mi potrà tornare utile in futuro. 
-In particolare, ho chiesto a Claude come strutturano le pipeline in aziende big tech e mi è stato suggerito questo framework Hydra, sviluppato da Meta, che io non conoscevo. Quindi mi sono fatto spiegare come funziona. Una volta imparato ciò l'ho adattato al mio caso, consultando anche la documentazione sotto-riportata.
+1. I used **Gemini** to fully understand how `faster_r_cnn` works. 
+2. In the second exercise, I wanted to try to create a reproducible pipeline model - not just a simple class with a built-in logging system - that was as model-independent as possible, both to complete the exercise correctly and to learn something new that might come in handy in the future. 
+Specifically, I asked **Claude** how they structure pipelines at big tech companies, and he suggested this Hydra framework, which I wasn’t familiar with. So I had him explain how it works. Once I understood it, I adapted it to my situation, also referring to the documentation.
