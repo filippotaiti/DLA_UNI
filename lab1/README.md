@@ -10,16 +10,16 @@ La struttura del secondo esercizio è la seguente:
 
 src
 ├── config
-    ├── model
-        ├── resnet50.yaml
-    ├── optimizer
-        ├── adam.yaml
-    ├── trainfile.yaml
+│   ├── model
+│   │   └── resnet50.yaml
+│   ├── optimizer
+│   │   └── adam.yaml
+│   └── train_file.yaml
 ├── create_dls.py
 ├── factory_model.py
 ├── logger.py
 ├── main.py
-├── train_and_evaluate.py
+└── train_and_evaluate.py
 
 
 
