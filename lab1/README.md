@@ -4,7 +4,7 @@ Laboratorio sulla classificazione e sull'object detection, utilizzando dataset c
 
 Il progetto si concentra inizialmente sulla classificazione, utilizzando sia una SVM che una ResNet50 e successivamente sull'object detection, utilizzando una Faster-R-CNN.
 
-Il laboratorio è suddiviso in 3 esercizi: il primo e il terzo sono reperibili presso il seguente notebook: [`DLA-Lab1.ipynb`](./DLA-Lab1.ipynb), mentre il secondo è stato sviluppato in moduli Python separati, contenuti nella cartella ['src'](./src).
+Il laboratorio è suddiviso in 3 esercizi: il primo e il terzo sono reperibili presso il seguente notebook: [`DLA-Lab1.ipynb`](./DLA-Lab1.ipynb), mentre il secondo è stato sviluppato in moduli Python separati, contenuti nella cartella [src](./src).
 
 La struttura del secondo esercizio è la seguente:
 
