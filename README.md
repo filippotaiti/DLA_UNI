@@ -60,5 +60,5 @@ Alternatively, notebooks can be run directly from the terminal using the followi
 cd labX
 # Activate the correct venv
 jupyter nbconvert --to script DLA-LabX.ipynb
-python DLA-LabX.ipynb
+python DLA-LabX.py
 ```
