@@ -52,7 +52,7 @@ python lab1/src/main.py
 In this exercise, we first perform an exploration of the data (Exploratory Data Analysis) on the **GTSRB** dataset. Next, we use a pre-trained ResNet50 to perform *feature extraction*.
 The features extracted in this way are used to train and evaluate an SVM. Up to this point, preprocessing consists solely of converting the images into tensors.
 
-The SVM achieves a low accuracy on the test set: **68%**.
+The SVM achieves a low accuracy on the test set: **69%**.
 
 Next, using more aggressive preprocessing (better suited for a pre-trained `ResNet50`), we fine-tune a pre-trained `ResNet50`, achieving an accuracy of **95%**.
 
@@ -76,14 +76,14 @@ We use mAP in various forms as the evaluation metric:
  
 | Experiment | Metric | Value |
 |---|---|---|
-| Baseline SVM | Test accuracy | **68%** |
+| Baseline SVM | Test accuracy | **69%** |
 | Fine-tuned ResNet50 | Test accuracy| **95%** |
-| Faster-R-CNN (ResNet50 backbone) | mAP | **0.5952** |
-| Faster-R-CNN (ResNet50 backbone) | mAP@50 | **0.7277** |
-| Faster-R-CNN (ResNet50 backbone) | mAP@75 | **0.7168** |
-| Faster-R-CNN (ResNet50 backbone) | mAP small| **0.4660** |
-| Faster-R-CNN (ResNet50 backbone) | mAP medium | **0.7334** |
-| Faster-R-CNN (ResNet50 backbone) | mAP large | **0.75** |
+| Faster-R-CNN (ResNet50 backbone) | mAP | **0.6489** |
+| Faster-R-CNN (ResNet50 backbone) | mAP@50 | **0.7848** |
+| Faster-R-CNN (ResNet50 backbone) | mAP@75 | **0.7502** |
+| Faster-R-CNN (ResNet50 backbone) | mAP small| **0.5132** |
+| Faster-R-CNN (ResNet50 backbone) | mAP medium | **0.7267** |
+| Faster-R-CNN (ResNet50 backbone) | mAP large | **0.885** |
 
 ## How to play
  
