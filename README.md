@@ -21,6 +21,7 @@ To run notebooks and script, simply clone the repository and use uv to synchroni
 ```bash
 git clone https://github.com/filippotaiti/DLA_UNI.git
 cd DLA_UNI
+```
 
 2. ### Create the virtual environment and install dependencies ###: 
 
@@ -55,4 +56,4 @@ Alternatively, notebooks can be run directly from the terminal using the followi
 ```bash
 cd labX
 uv run jupyter nbconvert --to notebook --execute --inplace DLA-LabX.ipynb
-
+```
