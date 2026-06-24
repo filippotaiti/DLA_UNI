@@ -73,17 +73,17 @@ We use mAP in various forms as the evaluation metric:
 ---
  
 ## Main results
- 
+
 | Experiment | Metric | Value |
 |---|---|---|
 | Baseline SVM | Test accuracy | **69%** |
 | Fine-tuned ResNet50 | Test accuracy| **95%** |
-| Faster-R-CNN (ResNet50 backbone) | mAP | **0.6489** |
-| Faster-R-CNN (ResNet50 backbone) | mAP@50 | **0.7848** |
-| Faster-R-CNN (ResNet50 backbone) | mAP@75 | **0.7502** |
-| Faster-R-CNN (ResNet50 backbone) | mAP small| **0.5132** |
-| Faster-R-CNN (ResNet50 backbone) | mAP medium | **0.7267** |
-| Faster-R-CNN (ResNet50 backbone) | mAP large | **0.885** |
+| Faster-R-CNN (ResNet50 backbone) | Test set - mAP | **0.5501** |
+| Faster-R-CNN (ResNet50 backbone) | Test set - mAP@50 | **0.7025** |
+| Faster-R-CNN (ResNet50 backbone) | Test set - mAP@75 | **0.6788** |
+| Faster-R-CNN (ResNet50 backbone) | Test set - mAP small| **0.4256** |
+| Faster-R-CNN (ResNet50 backbone) | Test set - mAP medium | **0.7064** |
+| Faster-R-CNN (ResNet50 backbone) | Test set - mAP large | **0.8500** |
 
 ## How to play
  
