@@ -36,11 +36,6 @@ Si misura l'efficacia con l'**Attack Success Rate (ASR)** e la **robust accuracy
 Il notebook imposta i seed di `torch`, `numpy` e `random` e attiva `torch.use_deterministic_algorithms(True)`. Per questo motivo è impostata anche la variabile d'ambiente `CUBLAS_WORKSPACE_CONFIG=:4096:8` (richiesta da alcune operazioni deterministiche su CUDA).
  
 ---
-
- 
-Il dataset CIFAR-10 viene scaricato in automatico in `./data` la prima volta che si eseguono le celle di caricamento dati.
- 
----
  
 ## Dataset e preprocessing
  
