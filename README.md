@@ -25,7 +25,10 @@ cd DLA_UNI
 
 2. ### Create the virtual environment and install dependencies: 
 
-`uv sync`
+
+```bash
+uv sync
+```
 
 This command creates a virtual environment and installs all the necessary packages.
 
