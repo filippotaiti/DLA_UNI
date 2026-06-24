@@ -58,5 +58,6 @@ Alternatively, notebooks can be run directly from the terminal using the followi
 
 ```bash
 cd labX
-uv run jupyter nbconvert --to notebook --execute --inplace DLA-LabX.ipynb
+uv run --with nbconvert jupyter nbconvert --to notebook --execute --inplace DLA-LabX.ipynb
+
 ```
