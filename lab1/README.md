@@ -23,7 +23,7 @@ src
 └── train_and_evaluate.py
 ```
 
-Specifically, the second exercise was developed using the framework  ['Hydra'](https://hydra.cc/docs/intro/).
+Specifically, the second exercise was developed using the framework  [Hydra](https://hydra.cc/docs/intro/).
 The goal was to develop a modular pipeline with a high level of abstraction, so that it would be as independent as possible from the model and the overall scenario.
 
 The pipeline consists of:
