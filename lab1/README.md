@@ -8,6 +8,7 @@ Il laboratorio è suddiviso in 3 esercizi: il primo e il terzo sono reperibili p
 
 La struttura del secondo esercizio è la seguente:
 
+```text
 src
 ├── config
 │   ├── model
@@ -20,6 +21,7 @@ src
 ├── logger.py
 ├── main.py
 └── train_and_evaluate.py
+```
 
 
 
