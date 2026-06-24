@@ -12,18 +12,18 @@ The selected labs are:
 
 ## Environment setup ##
 
-To run notebooks and script, simply clone the repository and use uv to synchronize the environment.
+To run notebooks and script, simply clone the repository and use *uv* to synchronize the environment.
 
 ---
 
-1. ### Clone the repository ###:
+1. ### Clone the repository:
 
 ```bash
 git clone https://github.com/filippotaiti/DLA_UNI.git
 cd DLA_UNI
 ```
 
-2. ### Create the virtual environment and install dependencies ###: 
+2. ### Create the virtual environment and install dependencies: 
 
 `uv sync`
 
