@@ -45,7 +45,7 @@ Le immagini sono trasformate con `torchvision.transforms.v2` e **normalizzate co
  
 Una classe `NormalizeInverse` esegue la de-normalizzazione (`inv_normalize`), necessaria per visualizzare correttamente le immagini e per misurare le perturbazioni nello spazio dei pixel.
  
-> **Budget di perturbazione e spazio normalizzato.** Poiché le immagini sono normalizzate, un valore `eps` (es. `5/255`) vincola la perturbazione L∞ *nello spazio normalizzato*. Con `std = 0.5`, la perturbazione L∞ corrispondente *nello spazio dei pixel* è `eps · 0.5` — ad esempio `5/255` in spazio normalizzato ≈ `2.5/255` sui pixel.
+> **Budget di perturbazione e spazio normalizzato.** Poiché le immagini sono normalizzate, un valore `eps` (es. `5/255`) vincola la perturbazione L∞ *nello spazio normalizzato*. Con `std = 0.5`, la perturbazione L∞ corrispondente *nello spazio dei pixel* è `eps · 0.5` - ad esempio `5/255` in spazio normalizzato ≈ `2.5/255` sui pixel.
  
 ---
  
