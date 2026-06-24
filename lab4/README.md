@@ -1,130 +1,99 @@
-# Adversarial Learning & OOD Detection
+# Lab 4: OOD Detection and Adversarial Robustness
  
-Laboratorio sull'adversarial learning e il rilevamento di campioni *out-of-distribution* (OOD) su CIFAR-10. 
+Lab on adversarial learning and the detection of *out-of-distribution* (OOD) samples on CIFAR-10. 
 
-Il progetto copre tre filoni collegati: una **pipeline di OOD detection** basata sulle uscite di un classificatore e su un autoencoder, l'implementazione del **Fast Gradient Sign Method (FGSM)** per attacchi avversari *targeted* e *untargeted*, e una **difesa** tramite *adversarial training*.
+The project covers three related areas: an **OOD detection pipeline** based on the outputs of a classifier and an autoencoder, the implementation of the **Fast Gradient Sign Method (FGSM)** for *targeted* and *untargeted* adversarial attacks, and a **defense** using *adversarial training*.
  
-Tutto il codice è contenuto in un unico notebook: [`DLA-Lab4.ipynb`](./DLA-Lab4.ipynb).
- 
----
- 
-## Indice
- 
-- [Panoramica](#panoramica)
-- [Dataset e preprocessing](#dataset-e-preprocessing)
-- [Metodi implementati](#metodi-implementati)
-  - [1. OOD detection](#1-ood-detection)
-  - [2. Attacchi avversari (FGSM) e difesa](#2-attacchi-avversari-e-difesa-fgsm)
-  - [3. Adversarial training](#3-attacchi-adversarial-targeted)
-- [Risultati principali](#risultati-principali)
-- [Come riprodurre](#come-riprodurre)
----
- 
-## Panoramica
- 
-Il progetto si articola in tre esercizi che condividono lo stesso classificatore CNN e lo stesso setup di dati.
- 
-1. **OOD detection** - Si verifica quanto bene vengono separati i dati *in-distribution* (CIFAR-10) da quelli *out-of-distribution* (rumore casuale generato da `FakeData`) utilizzando due detector: uno basato sulle uscite del classificatore (max-logit e max-softmax) e quello basato sull'errore di ricostruzione di un autoencoder. La qualità della separazione è misurata con l'**AUROC**.
-2. **Attacchi avversari e difesa** - Si implementa l'FGSM e lo si applica iterativamente per generare esempi avversari, sia *untargeted* (far sbagliare il modello in qualunque modo) sia *targeted* (forzare una classe specifica) (*es 2.1*). 
-   Successivamente (*es 2.2*) si riaddestra il classificatore augmentando il training set con esempi adversarial on-the-fly. Una volta fatto ciò, si verifica il miglioramento di robustezza del modello.
-Si misura l'efficacia con l'**Attack Success Rate (ASR)** e la **robust accuracy** al variare del budget di perturbazione.
-3. **Attacchi targeted con valutazione qualitativa e quantitativa**: si generano esempi adversarial target per cercare di ingannare il modello. 
----
- 
-### Riproducibilità
- 
-Il notebook imposta i seed di `torch`, `numpy` e `random` e attiva `torch.use_deterministic_algorithms(True)`. Per questo motivo è impostata anche la variabile d'ambiente `CUBLAS_WORKSPACE_CONFIG=:4096:8` (richiesta da alcune operazioni deterministiche su CUDA).
+All the code is contained in a single notebook: [`DLA-Lab4.ipynb`](./DLA-Lab4.ipynb).
  
 ---
  
-## Dataset e preprocessing
+## Overview
  
-- **In-distribution (ID):** CIFAR-10 (10 classi, immagini 3×32×32).
-- **Out-of-distribution (OOD):** `torchvision.datasets.FakeData`, che genera **immagini di rumore casuale**.
-Le immagini sono trasformate con `torchvision.transforms.v2` e **normalizzate con `mean = (0.5, 0.5, 0.5)` e `std = (0.5, 0.5, 0.5)`**, portando i pixel nell'intervallo `[-1, 1]`. La stessa trasformazione è applicata a CIFAR-10 e a `FakeData`, così i punteggi dei detector sono confrontabili.
+The project consists of three exercises that share the same CNN classifier and the same data setup:
  
-Una classe `NormalizeInverse` esegue la de-normalizzazione (`inv_normalize`), necessaria per visualizzare correttamente le immagini e per misurare le perturbazioni nello spazio dei pixel.
- 
-> **Budget di perturbazione e spazio normalizzato.** Poiché le immagini sono normalizzate, un valore `eps` (es. `5/255`) vincola la perturbazione L∞ *nello spazio normalizzato*. Con `std = 0.5`, la perturbazione L∞ corrispondente *nello spazio dei pixel* è `eps · 0.5` - ad esempio `5/255` in spazio normalizzato ≈ `2.5/255` sui pixel.
- 
----
- 
-## Implementazione
- 
-### 1. OOD detection
- 
-Il modello di base è una **CNN** convoluzionale (5 layer convoluzionali + 3 fully-connected) addestrata alla classificazione su CIFAR-10 con `CrossEntropyLoss` e ottimizzatore Adam.
- 
-A partire dalle sue uscite si definiscono due punteggi di normalità (più alto = più probabilmente in-distribution):
- 
-- **`max_logit`** — il valore massimo dei logit grezzi. Non è limitato in un intervallo.
-- **`max_softmax`** — la massima probabilità softmax (con parametro opzionale di *temperature*). È limitato in `[0, 1]`.
- 
-In parallelo si addestra un **autoencoder** convoluzionale (encoder/decoder simmetrici, attivazione finale `Tanh` coerente con il range `[-1, 1]`) **solo sulle immagini in-distribution**. Il punteggio di normalità è l'**errore di ricostruzione MSE cambiato di segno** (`-MSE`): le immagini ben ricostruite (basso errore) ottengono un punteggio alto, quelle ricostruite male (alto errore, tipiche dei dati OOD) un punteggio basso.
- 
-La performance di entrambi i detector è valutata con la **curva ROC**.
- 
-### 2. Attacchi avversari e difesa (FGSM)
- 
-La funzione `FGSM` implementa il passo base del Fast Gradient Sign Method:
- 
-- calcola il gradiente della loss rispetto all'immagine di input;
-- costruisce la perturbazione `eps · sign(gradiente)`;
-- per l'attacco **untargeted** somma la perturbazione (`x + eps·sign`), allontanando l'immagine dalla classe corretta;
-- per l'attacco **targeted** la sottrae (`x - eps·sign`), avvicinando l'immagine a una classe bersaglio.
-Le funzioni `untargeted_attack` e `targeted_attack` applicano l'FGSM **iterativamente**: partono dall'immagine pulita e accumulano passi di ampiezza `eps` finché l'attacco riesce o si raggiunge un numero massimo di iterazioni, riportando il *budget* L∞ totale impiegato.
-
-La difesa riaddestra il classificatore con una variante dell'adversarial training: per ogni batch si generano esempi avversari FGSM on-the-fly e si calcola la loss su di essi, in modo da valutare la variazione di robustezza del modello.
-
- 
-### 3. Attacchi adversarial targeted
-
-Attraverso FGSM si generano esempi adversarial targeted, in modo ripetuto su tutte le classi bersaglio, utilizzando diverse metriche:
-- **Attack Success Rate (ASR)**: frazione di campioni attaccabili che l'attacco riesce a ingannare. Essendo l'attacco targeted, vengono esclusi gli elementi la cui classe vera è già la classe target e quelli già predetti come target.
-- **Robust accuracy**: accuratezza del modello *sugli esempi avversari*. E' sempre  <= clean accuracy.
-- **Clean accuracy**: la si riporta per completezza e riferimento.
- 
-L'analisi è ripetuta per **diversi valori di budget** (`eps` da `3/255` a `8/255`), tracciando le curve di ASR e robust accuracy in funzione della perturbazione.
+1. **OOD Detection**: I evaluate how well *in-distribution* data (CIFAR-10) is separated from *out-of-distribution* data (random noise generated by `FakeData`) using two detectors: one based on the classifier’s outputs (max-logit and max-softmax) and one based on the reconstruction error of an autoencoder. The quality of the separation is measured using **AUROC**.
+2. **Adversarial Attacks and Defense**: FGSM is implemented and applied iteratively to generate adversarial examples, both *untargeted* (to cause the model to make mistakes in any way) and *targeted* (to force a specific class) (*Ex. 2.1*). 
+   Next (*Ex. 2.2*), the classifier is retrained by augmenting the training set with adversarial examples generated on the fly. Once this is done, the improvement in the model’s robustness is verified.
+Effectiveness is measured using the **Attack Success Rate (ASR)** and **robust accuracy** as the perturbation budget varies.
+3. **Targeted Attacks with Qualitative and Quantitative Assessment**: Adversarial examples are generated to try to fool the model. 
 
 ---
  
-## Risultati principali
+## Dataset and preprocessing
  
-| Esperimento | Metrica | Valore |
+- **In-distribution (ID):** CIFAR-10 (10 classes, 3×32×32 images).
+- **Out-of-distribution (OOD):** `torchvision.datasets.FakeData`, that generates **images of random noise**.
+The images are transformed using `torchvision.transforms.v2` and **normalized with `mean = (0.5, 0.5, 0.5)` and `std = (0.5, 0.5, 0.5)`**, bringing the pixels into the range `[-1, 1]`. The same transformation is applied to CIFAR-10 and `FakeData`, so the detector scores are comparable.
+ 
+---
+ 
+## Implementation
+ 
+### 1. OOD Detection
+ 
+The base model is a **CNN** (5 convolutional layers + 3 fully-connected layers) trained for classification on CIFAR-10 using `CrossEntropyLoss` and the Adam optimizer.
+ 
+Based on its output, two normality scores are defined (higher score = more likely to be in-distribution):
+ 
+- **`max_logit`** : the maximum value of the raw logits. It is not restricted to a specific range.
+- **`max_softmax`**: the softmax maximum likelihood (with an optional *temperature* parameter). It is constrained to the range `[0, 1]`.
+ 
+A convolutional **autoencoder** (symmetric encoder/decoder, final activation `Tanh` consistent with the range `[-1, 1]`) is also trained **only on in-distribution images**. The normality score is the **MSE reconstruction error with the sign reversed** (`-MSE`): well-reconstructed images (low error) receive a high score, while poorly reconstructed images (high error, typical of OOD data) receive a low score.
+
+The performance of both detectors is evaluated using the **ROC curve**.
+ 
+### 2. Adversarial Attacks and Defense
+ 
+The `FGSM` function implements the Fast Gradient Sign Method:
+ 
+- Calculate the gradient of the loss with respect to the input image
+- Constructs the perturbation `eps · sign(gradient)`
+- For the **untargeted** attack, it adds the perturbation (`x + eps·sign`), shifting the image away from the correct class
+- For a **targeted** attack, it subtracts (`x - eps·sign`), bringing the image closer to a target class.
+
+The `untargeted_attack` and `targeted_attack` functions apply FGSM **iteratively**: they start with the clean image and accumulate steps of amplitude `eps` until the attack succeeds or a maximum number of iterations is reached, reporting the total *budget* used.
+
+The defense retrains the classifier using adversarial training: for each batch, adversarial examples are generated on the fly, and the loss is calculated for them in order to evaluate changes in the model's robustness.
+
+ 
+### 3. Targeted Attacks with Qualitative and Quantitative Assessment
+
+FGSM is used to generate targeted adversarial examples, repeatedly across all target classes, using different metrics:
+- **Attack Success Rate (ASR)**: The fraction of attackable targets that the attack manages to deceive. Since the attack is targeted, elements whose true class is already the target class and those already predicted to be targets are excluded.
+- **Robust Accuracy**: model accuracy *on the adversarial examples*. It is always  <= clean accuracy.
+- **Clean Accuracy**: It is included here for the sake of completeness and as a reference.
+
+For the qualitative evaluation of the generated adversarial examples, however, the image showing the generated noise is provided (with a 1x magnification factor to make it visible).
+
+
+The analysis is repeated for **various budget values** (`eps` ranging from `3/255` to `8/255`), plotting the ASR and robust accuracy curves as a function of the perturbation.
+
+---
+ 
+## Main results
+ 
+| Experiment | Metric | Value |
 |---|---|---|
-| Classificatore CNN (base) | Test accuracy (CIFAR-10) | **68.7%** |
-| Classificatore CNN dopo adversarial training | Test accuracy (CIFAR-10) | **70%** |
+| CNN classifier (base) | Test accuracy (CIFAR-10) | **68.7%** |
+| CNN classifier after adversarial training | Test accuracy (CIFAR-10) | **70%** |
 | OOD detection — Autoencoder (`-MSE`) | AUROC (CIFAR-10 vs FakeData) | **1.00** |
 | OOD detection — CNN (`max_logit`) | AUROC (CIFAR-10 vs FakeData) | **0.92** |
  
-**Osservazioni:**
- 
-- **OOD detection.** L'autoencoder separa perfettamente immagini reali e rumore (AUROC 1.00): non avendo mai visto rumore in training, lo ricostruisce malissimo, producendo un errore nettamente più alto. La CNN ottiene un AUROC più basso (0.92) perché le reti possono classificare il rumore con confidenza elevata, producendo talvolta un max-logit alto che ne riduce il potere discriminante. **Importante:** `FakeData` è rumore puro, quindi questo è il caso *facile* di OOD detection - l'AUROC alto va letto come "in-distribution vs rumore casuale", non come robustezza contro anomalie difficili (es. esempi avversari).
-- **Attacchi.** Gli attacchi *targeted* richiedono in generale un budget maggiore di quelli *untargeted*, perché devono raggiungere una classe specifica anziché una misclassificazione qualsiasi. All'aumentare di `eps`, l'ASR cresce e la robust accuracy cala in modo monotono.
-- **Difesa.** L'adversarial training migliora la test accuracy di circa **1.5 punti percentuali** rispetto al modello base.
 ---
  
-## Come riprodurre
+## How to play
  
-Il notebook è pensato per essere eseguito **in ordine, dall'alto verso il basso**. La sequenza logica è:
- 
-1. **Setup** - import, seed, configurazione, trasformazioni e DataLoader (CIFAR-10 + FakeData). CIFAR-10 viene scaricato automaticamente.
-2. **Classificatore** -definizione e addestramento della CNN, valutazione (accuratezza + matrice di confusione).
-3. **OOD detection con la CNN** - calcolo dei punteggi `max_logit`/`max_softmax`, grafici delle distribuzioni e curva ROC.
-4. **OOD detection con l'autoencoder** - addestramento dell'autoencoder, calcolo dei punteggi di ricostruzione, grafici e curva ROC.
-5. **Attacchi FGSM** - definizione di `FGSM` e delle funzioni di attacco; esempi di attacco untargeted e targeted.
-6. **Adversarial training** - riaddestramento del classificatore con esempi avversari e nuova valutazione.
-7. **Valutazione targeted multi-budget** - `targeted_FGSM_with_eval` ed `evaluation` su tutte le classi e per diversi `eps`; curve finali ASR/robust accuracy vs budget.
+The notebook is designed to be worked through **in order, from top to bottom**.
 
+------
 
-------------
+## AI Use ##
 
-## Uso dell'AI ##
+I used **Claude** in Exercise 3.3 in the following scenarios:
 
-Ho utilizzato Claude nell'esercizio 3.3 nei seguenti scenari:
-
-1. Aiutarmi a generare dei grafici che evidenziassero i risultati ottenuti, in maniera tale da avere una buona visualizzazione. In particolare, non conoscevo l'esistenza del metodo *axline()* per disegnare delle linee su dei grafici ed ora si grazie all'utilizzo dell'IA.
-2. Volevo rappresentare la perturbazione data dagli attacchi, ma l'immagine risultante era tutta nera e non capivo come mai. Claude mi ha chiarito la motivazione e mi ha suggerito come modificare per fare in modo che si veda.
-3. Per aiutarmi a strutturare il README.md
+1. Help me create charts that highlight the results I've obtained, so that I can see them clearly. In particular, I didn't know about the *axline()* method for drawing lines on charts, but now I do, thanks to AI.
+2. I wanted to depict the disruption caused by the attacks, but the resulting image was completely black, and I didn't understand why. Claude explained the reason to me and suggested how to adjust it so that it would be visible.
+3. To get a README.md template that can also be used for the other workshops.
 
 
