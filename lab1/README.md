@@ -84,6 +84,10 @@ Come metrica di valutazione viene utilizzata la mAP in varie forme:
 | Faster-R-CNN (ResNet50 backbone) | mAP medium | **0.7334** |
 | Faster-R-CNN (ResNet50 backbone) | mAP large | **0.75** |
 
+## Come riprodurre
+ 
+Il notebook è pensato per essere eseguito **in ordine, dall'alto verso il basso**.
+
 
 ----------
 
