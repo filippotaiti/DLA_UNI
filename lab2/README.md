@@ -49,7 +49,7 @@ The fine-tuning led to a significant improvement in accuracy.
 | Baseline SVM | Test accuracy | **81%** |
 | Fine-tuned DistilBert | Test accuracy| **83.7%** |
 | CLIP Model BEFORE Fine-Tuning | Test accuracy | **65.56%** |
-| CLIP Model AFTER Fine-Tuning | Test accuracy | **88.3%** |
+| CLIP Model AFTER Fine-Tuning | Test accuracy | **88.6%** |
  
 
 ## How to play
